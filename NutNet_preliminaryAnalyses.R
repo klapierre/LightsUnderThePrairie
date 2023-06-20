@@ -370,7 +370,12 @@ commMetricsFactor <- commMetrics %>%
          !is.na(site)) %>% 
   mutate(plot_mani=ifelse(treat_other_name %in% c('N', 'P', 'K'), 1,
                    ifelse(treat_other_name %in% c('NP', 'NK', 'PK'), 2,
-                   ifelse(treat_other_name %in% c('NPK'), 3, 0))))
+                   ifelse(treat_other_name %in% c('NPK'), 3, 0)))) %>% 
+  mutate(plot_mani_N=ifelse(treat_other_name %in% c('P', 'K'), '1',
+                   ifelse(treat_other_name %in% c('PK'), '2',
+                   ifelse(treat_other_name %in% c('NPK'), '3N', 
+                   ifelse(treat_other_name %in% c('N'), '1N', 
+                   ifelse(treat_other_name %in% c('NP', 'NK'), '2N', 0))))))
 
 #figure - richness over time by plot mani
 ggplot(data=commMetricsFactor, aes(x=year, y=richness, color=as.factor(plot_mani))) +
@@ -391,3 +396,22 @@ ggplot(data=commMetricsFactor, aes(x=year, y=richness, color=as.factor(plot_mani
 
 # ggsave("C:\\Users\\kjkomatsu\\OneDrive - UNCG\\grants\\NSF_FY2023\\FY23_NSF_PopComm_lights under the prairie\\figures\\NutNet_richness_plot mani.png", width=9, height=8, units='in')
 
+
+#figure - richness over time by plot mani with N indicated
+ggplot(data=commMetricsFactor, aes(x=year, y=richness, color=as.factor(plot_mani), line_type=as.factor(n))) +
+  geom_rect(aes(xmin=2006.5, xmax=2007.5, ymin=0, ymax=25), fill='#F0F0F0', alpha=0.1, color='#F0F0F0') +
+  geom_rect(aes(xmin=2008.5, xmax=2009.5, ymin=0, ymax=25), fill='#F0F0F0', alpha=0.9, color='#F0F0F0') +
+  geom_rect(aes(xmin=2010.5, xmax=2011.5, ymin=0, ymax=25), fill='#F0F0F0', alpha=0.9, color='#F0F0F0') +
+  geom_rect(aes(xmin=2012.5, xmax=2013.5, ymin=0, ymax=25), fill='#F0F0F0', alpha=0.9, color='#F0F0F0') +
+  geom_rect(aes(xmin=2014.5, xmax=2015.5, ymin=0, ymax=25), fill='#F0F0F0', alpha=0.9, color='#F0F0F0') +
+  geom_rect(aes(xmin=2016.5, xmax=2017.5, ymin=0, ymax=25), fill='#F0F0F0', alpha=0.9, color='#F0F0F0') +
+  geom_rect(aes(xmin=2018.5, xmax=2019.5, ymin=0, ymax=25), fill='#F0F0F0', alpha=0.9, color='#F0F0F0') +
+  geom_rect(aes(xmin=2020.5, xmax=2021.5, ymin=0, ymax=25), fill='#F0F0F0', alpha=0.9, color='#F0F0F0') +
+  geom_jitter(width=0.3, height=0) +
+  # geom_point() +
+  geom_smooth(se=F, aes(linetype=as.factor(n), color=as.factor(plot_mani))) +
+  ylab('Plant Species Richness') + xlab('Year') +
+  scale_color_manual(values=c('#030E4F', '#FFE230', '#F6830C', '#C11414')) +
+  coord_cartesian(ylim=c(0,21))
+
+# ggsave("C:\\Users\\kjkomatsu\\OneDrive - UNCG\\grants\\NSF_FY2023\\FY23_NSF_PopComm_lights under the prairie\\figures\\NutNet_richness_plot mani.png", width=9, height=8, units='in')
