@@ -415,3 +415,30 @@ ggplot(data=commMetricsFactor, aes(x=year, y=richness, color=as.factor(plot_mani
   coord_cartesian(ylim=c(0,21))
 
 # ggsave("C:\\Users\\kjkomatsu\\OneDrive - UNCG\\grants\\NSF_FY2023\\FY23_NSF_PopComm_lights under the prairie\\figures\\NutNet_richness_plot mani.png", width=9, height=8, units='in')
+
+
+
+##### light - 2010 #####
+light2010 <- read_excel('NutNet_2010_data\\KNZ_SER_SGSNutNet_2010.xls', sheet='par') %>% 
+  filter(site=='KNZ', month==8) %>% 
+  left_join(trt) %>% 
+  filter(exclose!='Fenced') %>% 
+  group_by(site, plot, n, p, k, treat_other_name) %>% 
+  summarise(across(c(parg:par1.1), mean, na.rm=T)) %>% 
+  ungroup() %>% 
+  pivot_longer(cols=c(parg:par1.1), names_to='level', values_to='par') %>% 
+  separate(col=level, into=c('drop', 'height_m'), sep='r') %>% 
+  select(-drop) %>% 
+  mutate(height_m=as.numeric(ifelse(height_m=='g', 0, height_m)))
+
+ggplot(data=barGraphStats(data=light2010, variable="par", byFactorNames=c("height_m", "treat_other_name")), aes(x=height_m, y=mean, color=treat_other_name)) +
+  geom_point() +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.02)) +
+  geom_path()
+
+ggplot(data=barGraphStats(data=subset(light2010, treat_other_name %in% c('control', 'N', 'NP', 'NPK')), variable="par", byFactorNames=c("height_m", "treat_other_name")), aes(x=height_m, y=mean, color=treat_other_name)) +
+  geom_point() +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.02)) +
+  geom_path() +
+  xlab('Height (m)') + ylab('PAR')
+# ggsave("C:\\Users\\kjkomatsu\\OneDrive - UNCG\\grants\\NSF_FY2023\\FY23_NSF_PopComm_lights under the prairie\\figures\\NutNet_light attenuation.png", width=9, height=8, units='in')
